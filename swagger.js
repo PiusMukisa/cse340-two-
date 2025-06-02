@@ -1,15 +1,24 @@
-const swaggerAutogen =require('swagger-autogen')();
-const doc = {
-    info:{
-        title: 'Books Api',
-        description: 'Books Api'
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Contacts API',
+      version: '1.0.0',
+      description: 'A simple Express API for managing contacts',
     },
-    host: 'localhost:3000',
-    schemes: ['https', 'http']
+    servers: [
+      {
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://cse340-two.onrender.com' 
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // paths to files containing OpenAPI definitions
 };
 
-const outputFile = './swagger.json';
-const endpointsFile = ['./routes/index.js'];
-
-// This will generate swagger.json 
-swaggerAutogen(outputFile, endpointsFile, doc);
+const specs = swaggerJsdoc(options);
+module.exports = specs;
