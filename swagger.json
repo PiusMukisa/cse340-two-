@@ -1,0 +1,454 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Books & Authors API",
+    "description": "API for managing books and authors with CRUD operations",
+    "version": "1.0.0"
+  },
+  "host": "three41project2.onrender.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Hello World"
+        ],
+        "description": "Welcome endpoint",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/books/": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Get all books",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all books"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Create a new book",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Book object to be created",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["title", "author", "genre", "publishedDate", "price", "inStock", "rating"],
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Great Gatsby"
+                },
+                "author": {
+                  "type": "string",
+                  "example": "F. Scott Fitzgerald"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "Fiction"
+                },
+                "publishedDate": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "1925-04-10"
+                },
+                "price": {
+                  "type": "number",
+                  "example": 12.99
+                },
+                "inStock": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "rating": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 5,
+                  "example": 4.5
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Book created successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/books/{id}": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Get a single book by ID",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved book"
+          },
+          "400": {
+            "description": "Invalid book ID format"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Update a book by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Book ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Book object with updated values",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "The Great Gatsby - Updated"
+                },
+                "author": {
+                  "type": "string",
+                  "example": "F. Scott Fitzgerald"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "Classic Fiction"
+                },
+                "publishedDate": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "1925-04-10"
+                },
+                "price": {
+                  "type": "number",
+                  "example": 15.99
+                },
+                "inStock": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "rating": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 5,
+                  "example": 4.8
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book updated successfully"
+          },
+          "400": {
+            "description": "Validation failed or invalid ID"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Delete a book by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Book ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book deleted successfully"
+          },
+          "400": {
+            "description": "Invalid book ID format"
+          },
+          "404": {
+            "description": "Book not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/authors/": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "description": "Get all authors",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved all authors"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Authors"
+        ],
+        "description": "Create a new author",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Author object to be created",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["name", "birthDate", "nationality", "biography", "genre", "totalBooks", "isActive"],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "J.K. Rowling"
+                },
+                "birthDate": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "1965-07-31"
+                },
+                "nationality": {
+                  "type": "string",
+                  "example": "British"
+                },
+                "biography": {
+                  "type": "string",
+                  "example": "British author best known for the Harry Potter series"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "Fantasy"
+                },
+                "totalBooks": {
+                  "type": "number",
+                  "minimum": 0,
+                  "example": 7
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Author created successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/authors/{id}": {
+      "get": {
+        "tags": [
+          "Authors"
+        ],
+        "description": "Get a single author by ID",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Author ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved author"
+          },
+          "400": {
+            "description": "Invalid author ID format"
+          },
+          "404": {
+            "description": "Author not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Authors"
+        ],
+        "description": "Update an author by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Author ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Author object with updated values",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "J.K. Rowling"
+                },
+                "birthDate": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "1965-07-31"
+                },
+                "nationality": {
+                  "type": "string",
+                  "example": "British"
+                },
+                "biography": {
+                  "type": "string",
+                  "example": "Updated biography text"
+                },
+                "genre": {
+                  "type": "string",
+                  "example": "Fantasy"
+                },
+                "totalBooks": {
+                  "type": "number",
+                  "minimum": 0,
+                  "example": 10
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Author updated successfully"
+          },
+          "400": {
+            "description": "Validation failed or invalid ID"
+          },
+          "404": {
+            "description": "Author not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Authors"
+        ],
+        "description": "Delete an author by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Author ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Author deleted successfully"
+          },
+          "400": {
+            "description": "Invalid author ID format"
+          },
+          "404": {
+            "description": "Author not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+### Get all books
+GET http://localhost:3000/books
+
+### Get a books by ID
+GET http://localhost:3000/books/
+
+### Create a new book
+POST http://localhost:3000/books/9780743273565
+Content-Type: application/json
+
+{
+  "tittle": "Born a Crime",
+  "author": "Trevor Noah",
+  "genre": "Biography",
+  "published": "2016-11-15",
+  "price": 15.99,
+  "inStock": true,
+  "rating": 4.5
+}
+
+### Update a contact by ID
+PUT http://localhost:3000/books/9780743273565
+Content-Type: application/json
+
+{
+  "tittle": "Born a Crime",
+  "author": "Trevor Noah",
+  "genre": "Biography",
+  "published": "2016-11-15",
+  "price": 15.99,
+  "inStock": true,
+  "rating": 4.5
+}
+
+### Delete a contact
+DELETE http://localhost:3000/books/9780743273565
