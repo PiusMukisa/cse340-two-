@@ -1,36 +1,108 @@
+### Health Check
+GET http://localhost:3000/health
+
+### Debug Environment Variables
+GET http://localhost:3000/debug/env
+
+### Home Page
+GET http://localhost:3000/
+
+### Login with GitHub
+GET http://localhost:3000/login
+
+### Logout
+GET http://localhost:3000/logout
+
+### ========================
+### BOOKS ENDPOINTS
+### ========================
+
 ### Get all books
 GET http://localhost:3000/books
 
-### Get a books by ID
-GET http://localhost:3000/books/
+### Get a single book by ID (replace with actual MongoDB ObjectId)
+GET http://localhost:3000/books/656f1234567890abcdef1234
 
 ### Create a new book
-POST http://localhost:3000/books/9780743273565
+POST http://localhost:3000/books
 Content-Type: application/json
 
 {
-  "tittle": "Born a Crime",
+  "title": "Born a Crime",
   "author": "Trevor Noah",
   "genre": "Biography",
-  "published": "2016-11-15",
+  "publishedDate": "2016-11-15",
   "price": 15.99,
   "inStock": true,
   "rating": 4.5
 }
 
-### Update a contact by ID
-PUT http://localhost:3000/books/9780743273565
+### Update a book by ID (replace with actual MongoDB ObjectId)
+PUT http://localhost:3000/books/656f1234567890abcdef1234
 Content-Type: application/json
 
 {
-  "tittle": "Born a Crime",
+  "title": "Born a Crime: Stories from a South African Childhood",
   "author": "Trevor Noah",
-  "genre": "Biography",
-  "published": "2016-11-15",
-  "price": 15.99,
+  "genre": "Biography/Memoir",
+  "publishedDate": "2016-11-15",
+  "price": 17.99,
   "inStock": true,
-  "rating": 4.5
+  "rating": 4.7
 }
 
-### Delete a contact
-DELETE http://localhost:3000/books/9780743273565
+### Delete a book by ID (replace with actual MongoDB ObjectId)
+DELETE http://localhost:3000/books/656f1234567890abcdef1234
+
+### ========================
+### AUTHORS ENDPOINTS
+### ========================
+
+### Get all authors
+GET http://localhost:3000/authors
+
+### Get a single author by ID (replace with actual MongoDB ObjectId)
+GET http://localhost:3000/authors/656f1234567890abcdef5678
+
+### Create a new author
+POST http://localhost:3000/authors
+Content-Type: application/json
+
+{
+  "name": "Trevor Noah",
+  "email": "trevor@example.com",
+  "bio": "South African comedian, television host, and political commentator"
+}
+
+### Update an author by ID (replace with actual MongoDB ObjectId)
+PUT http://localhost:3000/authors/656f1234567890abcdef5678
+Content-Type: application/json
+
+{
+  "name": "Trevor Noah",
+  "email": "trevor.noah@example.com",
+  "bio": "South African comedian, television host, political commentator, and author of Born a Crime"
+}
+
+### Delete an author by ID (replace with actual MongoDB ObjectId)
+DELETE http://localhost:3000/authors/656f1234567890abcdef5678
+
+### ========================
+### SWAGGER DOCUMENTATION
+### ========================
+
+### View API Documentation
+GET http://localhost:3000/api-docs
+
+### ========================
+### PRODUCTION TESTING (Render)
+### ========================
+
+### Health Check - Production
+GET https://cse340-two.onrender.com/health
+
+### Get all books - Production
+GET https://cse340-two.onrender.com/books
+
+### Get all authors - Production
+GET https://cse340-two.onrender.com/authors

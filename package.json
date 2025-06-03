@@ -1,37 +1,35 @@
 {
-  "name": "contacts-api",
+  "name": "library-management-api",
   "version": "1.0.0",
-  "description": "A REST API for managing contacts",
+  "description": "A RESTful API for library management with GitHub OAuth",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed": "node seed.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^6.3.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "express-session": "^1.17.3",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   },
   "keywords": [
     "api",
-    "contacts",
+    "library",
+    "mongodb",
     "express",
-    "mongodb"
+    "oauth"
   ],
   "author": "Your Name",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^4.18.2",
-    "express-session": "^1.18.1",
-    "mongoose": "^7.5.0",
-    "passport": "^0.7.0",
-    "passport-github2": "^0.1.12",
-    "passport-local": "^1.0.0",
-    "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "license": "MIT"
 }

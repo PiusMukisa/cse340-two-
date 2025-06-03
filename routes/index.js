@@ -1,16 +1,39 @@
 const router = require('express').Router();
 const passport = require('passport');
 
+// Swagger documentation route
 router.use('/', require('./swagger'));
 
+// Home route
 router.get('/', (req, res) => {
   if (req.session.user) {
-    res.send(`Hello ${req.session.user.displayName || req.session.user.username || 'User'}! <a href="/logout">Logout</a>`);
+    res.json({
+      success: true,
+      message: `Welcome ${req.session.user.displayName || req.session.user.username || 'User'}!`,
+      user: {
+        username: req.session.user.username,
+        displayName: req.session.user.displayName,
+        profileUrl: req.session.user.profileUrl
+      },
+      links: {
+        logout: '/logout',
+        books: '/books',
+        authors: '/authors',
+        apiDocs: '/api-docs'
+      }
+    });
   } else {
-    res.send('You are logged out. <a href="/login">Login with GitHub</a>');
+    res.json({
+      success: false,
+      message: 'You are not logged in',
+      links: {
+        login: '/login'
+      }
+    });
   }
 });
 
+// API routes
 router.use('/books', require('./books'));
 router.use('/authors', require('./authors'));
 
@@ -22,7 +45,7 @@ router.get('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-// 📥 GitHub OAuth callback
+// 📥 GitHub OAuth callback - FIXED PATH
 router.get('/auth/github/callback',
   (req, res, next) => {
     console.log('📥 Received GitHub callback');
@@ -62,7 +85,10 @@ router.get('/logout', function(req, res, next) {
       if (err) {
         console.error('Session destroy error:', err);
       }
-      res.redirect('/');
+      res.json({
+        success: true,
+        message: 'Logged out successfully'
+      });
     });
   });
 });
@@ -70,14 +96,33 @@ router.get('/logout', function(req, res, next) {
 // 🛠️ Debug route (disable in production)
 router.get('/debug/env', (req, res) => {
   if (process.env.NODE_ENV === 'production') {
-    return res.status(404).send('Not found');
+    return res.status(404).json({ error: 'Not found' });
   }
 
   res.json({
-    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID ? '✅ Set' : '❌ Missing',
-    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET ? '✅ Set' : '❌ Missing',
-    GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || '❌ Missing',
-    NODE_ENV: process.env.NODE_ENV || 'development'
+    environment: {
+      MONGODB_URI: process.env.MONGODB_URI ? '✅ Set' : '❌ Missing',
+      DB_NAME: process.env.DB_NAME || '❌ Missing',
+      GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID ? '✅ Set' : '❌ Missing',
+      GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET ? '✅ Set' : '❌ Missing',
+      GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || '❌ Missing',
+      NODE_ENV: process.env.NODE_ENV || 'development',
+      PORT: process.env.PORT || 3000
+    },
+    session: {
+      isAuthenticated: !!req.session.user,
+      user: req.session.user ? req.session.user.username : null
+    }
+  });
+});
+
+// Health check route
+router.get('/health', (req, res) => {
+  res.json({
+    success: true,
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
