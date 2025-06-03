@@ -12,7 +12,7 @@ const options = {
       {
         url: process.env.NODE_ENV === 'production' 
           ? 'https://cse340-two.onrender.com' 
-          : 'http://localhost:3000',
+          : 'http://localhost:3002',
         description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server',
       },
     ],

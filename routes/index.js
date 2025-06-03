@@ -13,9 +13,10 @@ router.get('/', (req, res) => {
       user: {
         username: req.session.user.username,
         displayName: req.session.user.displayName,
-        profileUrl: req.session.user.profileUrl
+        profileUrl: req.session.user.profileUrl 
       },
       links: {
+        login: '/login',
         logout: '/logout',
         books: '/books',
         authors: '/authors',
