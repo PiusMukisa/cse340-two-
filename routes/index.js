@@ -3,9 +3,7 @@ const passport = require('passport');
 
 router.use('/', require('./swagger'));
 
-
 router.get('/', (req, res) => {
-  //#swagger.tags = ['Hello World']
   if (req.session.user) {
     res.send(`Hello ${req.session.user.displayName || req.session.user.username || 'User'}! <a href="/logout">Logout</a>`);
   } else {
@@ -16,52 +14,50 @@ router.get('/', (req, res) => {
 router.use('/books', require('./books'));
 router.use('/authors', require('./authors'));
 
-// Start GitHub OAuth login
+// 🔐 Start GitHub OAuth login
 router.get('/login', (req, res, next) => {
   console.log('🔐 Starting GitHub OAuth login...');
   passport.authenticate('github', {
-    scope: ['user:email'] // Request email scope
+    scope: ['user:email']
   })(req, res, next);
 });
 
-// GitHub OAuth callback with better error handling
-router.get('/auth/github/callback', 
+// 📥 GitHub OAuth callback
+router.get('/auth/github/callback',
   (req, res, next) => {
     console.log('📥 Received GitHub callback');
     console.log('Query params:', req.query);
-    
-    // Check for error in callback
+
     if (req.query.error) {
       console.error('❌ GitHub OAuth error:', req.query.error);
       return res.redirect('/?error=oauth_denied');
     }
-    
+
     next();
   },
-  passport.authenticate('github', { 
+  passport.authenticate('github', {
     failureRedirect: '/?error=oauth_failed',
     failureFlash: false
   }),
   function(req, res) {
     console.log('✅ GitHub OAuth successful');
     console.log('User:', req.user.username);
-    
+
     req.session.user = req.user;
     res.redirect('/');
   }
 );
 
-// Enhanced logout with session cleanup
-router.get('/logout', function(req, res, next){
+// 👋 Logout
+router.get('/logout', function(req, res, next) {
   console.log('👋 User logging out');
-  
+
   req.logout(function(err) {
-    if (err) { 
+    if (err) {
       console.error('Logout error:', err);
-      return next(err); 
+      return next(err);
     }
-    
-    // Clear session
+
     req.session.destroy((err) => {
       if (err) {
         console.error('Session destroy error:', err);
@@ -71,12 +67,12 @@ router.get('/logout', function(req, res, next){
   });
 });
 
-// Debug route to check environment variables (remove in production)
+// 🛠️ Debug route (disable in production)
 router.get('/debug/env', (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     return res.status(404).send('Not found');
   }
-  
+
   res.json({
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID ? '✅ Set' : '❌ Missing',
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET ? '✅ Set' : '❌ Missing',
