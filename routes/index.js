@@ -44,12 +44,28 @@ router.get('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-// GitHub OAuth callback with comprehensive error handling
+// Function to get the correct callback URL (moved here for access)
+const getCallbackURL = () => {
+  if (process.env.GITHUB_CALLBACK_URL) {
+    return process.env.GITHUB_CALLBACK_URL;
+  }
+  
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://cse340-two.onrender.com/auth/github/callback';
+  }
+  
+  return `http://localhost:${process.env.PORT || 3000}/auth/github/callback`;
+};
+
+// REPLACE THE OLD CALLBACK WITH THIS ENHANCED VERSION
 router.get('/auth/github/callback', (req, res, next) => {
   console.log('📥 Received GitHub callback');
   console.log('Query params:', req.query);
   console.log('Full URL:', req.url);
-
+  console.log('Original URL:', req.originalUrl);
+  console.log('Headers:', req.headers);
+  console.log('Expected callback URL:', getCallbackURL());
+  
   // Check for error in callback
   if (req.query.error) {
     console.error('❌ GitHub OAuth error:', req.query.error);
@@ -60,7 +76,28 @@ router.get('/auth/github/callback', (req, res, next) => {
   // Check for code parameter
   if (!req.query.code) {
     console.error('❌ No authorization code received');
-    return res.redirect('/?error=oauth_failed');
+    console.error('This usually means:');
+    console.error('1. GitHub OAuth app callback URL mismatch');
+    console.error('2. Missing or incorrect environment variables');
+    console.error('3. GitHub app not properly configured');
+    
+    // Return debug information to help diagnose
+    return res.send(`
+      <h1>OAuth Debug Information</h1>
+      <p><strong>Expected Callback URL:</strong> ${getCallbackURL()}</p>
+      <p><strong>Received URL:</strong> ${req.originalUrl}</p>
+      <p><strong>Query Parameters:</strong> ${JSON.stringify(req.query)}</p>
+      <p><strong>GitHub Client ID:</strong> ${process.env.GITHUB_CLIENT_ID ? 'Set' : 'Missing'}</p>
+      <p><strong>GitHub Client Secret:</strong> ${process.env.GITHUB_CLIENT_SECRET ? 'Set' : 'Missing'}</p>
+      <hr>
+      <p><strong>Instructions:</strong></p>
+      <ol>
+        <li>Check your GitHub OAuth app settings</li>
+        <li>Ensure the callback URL exactly matches: <code>${getCallbackURL()}</code></li>
+        <li>Verify all environment variables are set</li>
+      </ol>
+      <a href="/">Go Home</a>
+    `);
   }
 
   console.log('✅ Authorization code received, proceeding with authentication...');
