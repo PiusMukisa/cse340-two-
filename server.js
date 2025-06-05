@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const { initDb } = require('./data/database');
 const passport = require('passport');
 const session = require('express-session');
-const GithubStrategy = require('passport-github2').Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
+
 const cors = require('cors');
 
 const app = express();
@@ -28,15 +29,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Passport GitHub Strategy
-passport.use(new GithubStrategy({
+passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.GITHUB_CALLBACK_URL
-}, (accessToken, refreshToken, profile, done) => {
-  // Log successful authentication
-  console.log('GitHub OAuth successful for user:', profile.username);
+  callbackURL: process.env.GITHUB_CALLBACK_URL || "https://yourapp.onrender.com/auth/github/callback" // ✅ This is the one
+},
+function(accessToken, refreshToken, profile, done) {
+  // You can add user lookup/creation logic here
   return done(null, profile);
-}));
+}
+));
+
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
