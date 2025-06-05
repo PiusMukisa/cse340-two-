@@ -561,8 +561,12 @@ router.get('/logout', function(req, res, next){
 });
 
 // Enhanced debug route
-router.get('/debug/env', (req, res) => {
+const { isAuthenticated } = require('../middleware/authenticate'); // Add this line
+
+router.get('/debug/env', isAuthenticated, (req, res) => { // Add isAuthenticated here
   if (process.env.NODE_ENV === 'production') {
+    // Still good to keep this check, even if authenticated,
+    // as debug info might not be desired in prod at all.
     return res.status(404).send('Not found');
   }
   

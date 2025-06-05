@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../data/database');
 const Book = require('../models/Book');
+const { isAuthenticated } = require('../middleware/authenticate');
+
+// Apply authentication middleware to all routes in this file
+router.use(isAuthenticated);
 
 // Simplified middleware
 router.use(async (req, res, next) => {
