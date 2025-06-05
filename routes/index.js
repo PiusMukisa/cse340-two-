@@ -1,129 +1,86 @@
 const router = require('express').Router();
 const passport = require('passport');
 
-// Swagger documentation route
 router.use('/', require('./swagger'));
 
-// Home route
 router.get('/', (req, res) => {
+  //#swagger.tags = ['Hello World']
   if (req.session.user) {
-    res.json({
-      success: true,
-      message: `Welcome ${req.session.user.displayName || req.session.user.username || 'User'}!`,
-      user: {
-        username: req.session.user.username,
-        displayName: req.session.user.displayName,
-        profileUrl: req.session.user.profileUrl 
-      },
-      links: {
-        login: '/login',
-        logout: '/logout',
-        books: '/books',
-        authors: '/authors',
-        apiDocs: '/api-docs'
-      }
-    });
+    res.send(`Hello ${req.session.user.displayName || req.session.user.username || 'User'}! <a href="/logout">Logout</a>`);
   } else {
-    res.json({
-      success: false,
-      message: 'You are not logged in',
-      links: {
-        login: '/login'
-      }
-    });
+    res.send('You are logged out. <a href="/login">Login with GitHub</a>');
   }
 });
 
-// API routes
 router.use('/books', require('./books'));
 router.use('/authors', require('./authors'));
 
-// 🔐 Start GitHub OAuth login
+// Start GitHub OAuth login
 router.get('/login', (req, res, next) => {
   console.log('🔐 Starting GitHub OAuth login...');
   passport.authenticate('github', {
-    scope: ['user:email']
+    scope: ['user:email'] // Request email scope
   })(req, res, next);
 });
 
-// 📥 GitHub OAuth callback - FIXED PATH
-router.get('/auth/github/callback',
+// GitHub OAuth callback with better error handling
+router.get('/auth/github/callback', 
   (req, res, next) => {
     console.log('📥 Received GitHub callback');
     console.log('Query params:', req.query);
-
+    
+    // Check for error in callback
     if (req.query.error) {
       console.error('❌ GitHub OAuth error:', req.query.error);
       return res.redirect('/?error=oauth_denied');
     }
-
+    
     next();
   },
-  passport.authenticate('github', {
+  passport.authenticate('github', { 
     failureRedirect: '/?error=oauth_failed',
     failureFlash: false
   }),
   function(req, res) {
     console.log('✅ GitHub OAuth successful');
     console.log('User:', req.user.username);
-
+    
     req.session.user = req.user;
     res.redirect('/');
   }
 );
 
-// 👋 Logout
-router.get('/logout', function(req, res, next) {
+// Enhanced logout with session cleanup
+router.get('/logout', function(req, res, next){
   console.log('👋 User logging out');
-
+  
   req.logout(function(err) {
-    if (err) {
+    if (err) { 
       console.error('Logout error:', err);
-      return next(err);
+      return next(err); 
     }
-
+    
+    // Clear session
     req.session.destroy((err) => {
       if (err) {
         console.error('Session destroy error:', err);
       }
-      res.json({
-        success: true,
-        message: 'Logged out successfully'
-      });
+      res.redirect('/');
     });
   });
 });
 
-// 🛠️ Debug route (disable in production)
+// Debug route to check environment variables (remove in production)
 router.get('/debug/env', (req, res) => {
   if (process.env.NODE_ENV === 'production') {
-    return res.status(404).json({ error: 'Not found' });
+    return res.status(404).send('Not found');
   }
-
+  
   res.json({
-    environment: {
-      MONGODB_URI: process.env.MONGODB_URI ? '✅ Set' : '❌ Missing',
-      DB_NAME: process.env.DB_NAME || '❌ Missing',
-      GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID ? '✅ Set' : '❌ Missing',
-      GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET ? '✅ Set' : '❌ Missing',
-      GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || '❌ Missing',
-      NODE_ENV: process.env.NODE_ENV || 'development',
-      PORT: process.env.PORT || 3000
-    },
-    session: {
-      isAuthenticated: !!req.session.user,
-      user: req.session.user ? req.session.user.username : null
-    }
-  });
-});
-
-// Health check route
-router.get('/health', (req, res) => {
-  res.json({
-    success: true,
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID ? '✅ Set' : '❌ Missing',
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET ? '✅ Set' : '❌ Missing',
+    GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL || '❌ Missing',
+    NODE_ENV: process.env.NODE_ENV || 'development'
   });
 });
 
