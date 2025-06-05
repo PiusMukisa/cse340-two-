@@ -47,6 +47,20 @@ app.use('/', require('./routes/index.js'));
 // Remove the duplicate callback route - it's handled in routes/index.js
 // The duplicate route was causing conflicts
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  // For GitHub OAuth errors, redirect to home with error
+  if (req.originalUrl.startsWith('/auth/github')) {
+    return res.redirect('/?error=internal_error');
+  }
+  // For all other errors, render a simple HTML error page
+  res.status(500).send(`
+    <h1>Internal Server Error</h1>
+    <p style="color:red;">${err.message || 'Something went wrong.'}</p>
+    <a href="/">Go back to Home</a>
+  `);
+});
+
 // Connect to database and start server
 initDb()
   .then(() => {

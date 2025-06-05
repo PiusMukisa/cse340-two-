@@ -4,12 +4,31 @@ const passport = require('passport');
 router.use('/', require('./swagger'));
 
 router.get('/', (req, res) => {
-  //#swagger.tags = ['Hello World']
-  if (req.session.user) {
-    res.send(`Hello ${req.session.user.displayName || req.session.user.username || 'User'}! <a href="/logout">Logout</a>`);
-  } else {
-    res.send('You are logged out. <a href="/login">Login with GitHub</a>');
+  const user = req.session.user;
+  const error = req.query.error;
+  let errorMsg = '';
+  if (error) {
+    if (error === 'oauth_denied') errorMsg = 'GitHub login was denied.';
+    else if (error === 'oauth_failed') errorMsg = 'GitHub login failed.';
+    else if (error === 'internal_error') errorMsg = 'Internal server error during login.';
+    else if (error === 'login_failed') errorMsg = 'Failed to log you in after authentication.';
+    else errorMsg = 'Unknown error.';
   }
+  res.send(`
+    <h1>Welcome${user ? ', ' + (user.displayName || user.username || 'User') : ''}!</h1>
+    ${errorMsg ? `<p style="color:red;">${errorMsg}</p>` : ''}
+    <ul>
+      ${user 
+        ? `<li><a href="/logout">Logout</a></li>
+           <li><a href="/profile">Profile (not implemented)</a></li>`
+        : `<li><a href="/login">Login with GitHub</a></li>`
+      }
+      <li><a href="/books">Books API</a></li>
+      <li><a href="/authors">Authors API</a></li>
+      <li><a href="/api-docs">API Documentation (Swagger)</a></li>
+      <li><a href="/debug/env">Debug Environment</a></li>
+    </ul>
+  `);
 });
 
 router.use('/books', require('./books'));
@@ -28,25 +47,36 @@ router.get('/auth/github/callback',
   (req, res, next) => {
     console.log('📥 Received GitHub callback');
     console.log('Query params:', req.query);
-    
+
     // Check for error in callback
     if (req.query.error) {
       console.error('❌ GitHub OAuth error:', req.query.error);
       return res.redirect('/?error=oauth_denied');
     }
-    
+
     next();
   },
-  passport.authenticate('github', { 
-    failureRedirect: '/?error=oauth_failed',
-    failureFlash: false
-  }),
-  function(req, res) {
-    console.log('✅ GitHub OAuth successful');
-    console.log('User:', req.user.username);
-    
-    req.session.user = req.user;
-    res.redirect('/');
+  (req, res, next) => {
+    passport.authenticate('github', { 
+      failureRedirect: '/?error=oauth_failed',
+      failureFlash: false
+    }, (err, user, info) => {
+      if (err) {
+        console.error('❌ Passport error:', err);
+        return res.redirect('/?error=internal_error');
+      }
+      if (!user) {
+        return res.redirect('/?error=oauth_failed');
+      }
+      req.logIn(user, (err) => {
+        if (err) {
+          console.error('❌ Login error:', err);
+          return res.redirect('/?error=login_failed');
+        }
+        req.session.user = user;
+        return res.redirect('/');
+      });
+    })(req, res, next);
   }
 );
 

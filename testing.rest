@@ -2,16 +2,16 @@
 GET http://localhost:3000/health
 
 ### Debug Environment Variables
-GET http://localhost:3000/debug/env
+GET http://localhost:3002/debug/env
 
 ### Home Page
-GET http://localhost:3000/
+GET http://localhost:3002/
 
 ### Login with GitHub
-GET http://localhost:3000/login
+GET http://localhost:3002/login
 
 ### Logout
-GET http://localhost:3000/logout
+GET http://localhost:3002/logout
 
 ### ========================
 ### BOOKS ENDPOINTS
@@ -21,10 +21,10 @@ GET http://localhost:3000/logout
 GET http://localhost:3000/books
 
 ### Get a single book by ID (replace with actual MongoDB ObjectId)
-GET http://localhost:3000/books/656f1234567890abcdef1234
+GET http://localhost:3002/books/656f1234567890abcdef1234
 
 ### Create a new book
-POST http://localhost:3000/books
+POST http://localhost:3002/books
 Content-Type: application/json
 
 {
@@ -38,7 +38,7 @@ Content-Type: application/json
 }
 
 ### Update a book by ID (replace with actual MongoDB ObjectId)
-PUT http://localhost:3000/books/656f1234567890abcdef1234
+PUT http://localhost:3002/books/656f1234567890abcdef1234
 Content-Type: application/json
 
 {
@@ -52,7 +52,7 @@ Content-Type: application/json
 }
 
 ### Delete a book by ID (replace with actual MongoDB ObjectId)
-DELETE http://localhost:3000/books/656f1234567890abcdef1234
+DELETE http://localhost:3002/books/656f1234567890abcdef1234
 
 ### ========================
 ### AUTHORS ENDPOINTS
@@ -62,10 +62,10 @@ DELETE http://localhost:3000/books/656f1234567890abcdef1234
 GET http://localhost:3000/authors
 
 ### Get a single author by ID (replace with actual MongoDB ObjectId)
-GET http://localhost:3000/authors/656f1234567890abcdef5678
+GET http://localhost:3002/authors/656f1234567890abcdef5678
 
 ### Create a new author
-POST http://localhost:3000/authors
+POST http://localhost:3002/authors
 Content-Type: application/json
 
 {
@@ -75,7 +75,7 @@ Content-Type: application/json
 }
 
 ### Update an author by ID (replace with actual MongoDB ObjectId)
-PUT http://localhost:3000/authors/656f1234567890abcdef5678
+PUT http://localhost:3002/authors/656f1234567890abcdef5678
 Content-Type: application/json
 
 {
@@ -85,14 +85,14 @@ Content-Type: application/json
 }
 
 ### Delete an author by ID (replace with actual MongoDB ObjectId)
-DELETE http://localhost:3000/authors/656f1234567890abcdef5678
+DELETE http://localhost:3002/authors/656f1234567890abcdef5678
 
 ### ========================
 ### SWAGGER DOCUMENTATION
 ### ========================
 
 ### View API Documentation
-GET http://localhost:3000/api-docs
+GET http://localhost:3002/api-docs
 
 ### ========================
 ### PRODUCTION TESTING (Render)

@@ -12,7 +12,7 @@ router.use(async (req, res, next) => {
     console.error('Database connection error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Database connection failed❌',
+      message: 'Database connection failed',
       error: error.message
     });
   }
