@@ -34,10 +34,26 @@ router.get('/', (req, res) => {
 router.use('/books', require('./books'));
 router.use('/authors', require('./authors'));
 
-// Start GitHub OAuth login
+// Start GitHub OAuth login with enhanced debugging
 router.get('/login', (req, res, next) => {
   console.log('🔐 Starting GitHub OAuth login...');
-  console.log('🔗 Callback URL will be:', process.env.GITHUB_CALLBACK_URL || 'default callback');
+  console.log('🔗 Callback URL will be:', getCallbackURL());
+  console.log('GitHub Client ID:', process.env.GITHUB_CLIENT_ID ? 'Set' : 'MISSING');
+  console.log('GitHub Client Secret:', process.env.GITHUB_CLIENT_SECRET ? 'Set' : 'MISSING');
+  
+  // Check if required environment variables are missing
+  if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
+    console.error('❌ Missing GitHub OAuth credentials');
+    return res.send(`
+      <h1>OAuth Configuration Error</h1>
+      <p><strong>GitHub Client ID:</strong> ${process.env.GITHUB_CLIENT_ID ? '✅ Set' : '❌ Missing'}</p>
+      <p><strong>GitHub Client Secret:</strong> ${process.env.GITHUB_CLIENT_SECRET ? '✅ Set' : '❌ Missing'}</p>
+      <p><strong>Expected Callback URL:</strong> ${getCallbackURL()}</p>
+      <hr>
+      <p>Please check your environment variables and GitHub OAuth app configuration.</p>
+      <a href="/">Go Home</a>
+    `);
+  }
   
   passport.authenticate('github', {
     scope: ['user:email']
